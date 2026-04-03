@@ -104,26 +104,36 @@ if(MSVC AND NOT USE_RELATIVE_PATHS)
 
 elseif(USE_RELATIVE_PATHS)
 
-  set(bindir
-      "${CMAKE_INSTALL_BINDIR}"
-      CACHE STRING "bin directory"
-  )
-  set(sbindir
-      "${CMAKE_INSTALL_SBINDIR}"
-      CACHE STRING "sbin directory"
-  )
-  set(libdir
-      "${CMAKE_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}"
-      CACHE STRING "lib directory"
-  )
-  set(backenddir
-      "${libdir}/backends"
-      CACHE STRING "directory for Bareos backends"
-  )
-  set(plugindir
-      "${libdir}/plugins"
-      CACHE STRING "directory for Bareos plugins"
-  )
+  if(HAVE_WIN32)
+    # On Windows, all EXEs and DLLs must be in the same directory
+    # so the runtime linker can find them.
+    set(bindir "bin" CACHE STRING "bin directory")
+    set(sbindir "bin" CACHE STRING "sbin directory")
+    set(libdir "bin" CACHE STRING "lib directory")
+    set(backenddir "bin/backends" CACHE STRING "directory for Bareos backends")
+    set(plugindir "bin/plugins" CACHE STRING "directory for Bareos plugins")
+  else()
+    set(bindir
+        "${CMAKE_INSTALL_BINDIR}"
+        CACHE STRING "bin directory"
+    )
+    set(sbindir
+        "${CMAKE_INSTALL_SBINDIR}"
+        CACHE STRING "sbin directory"
+    )
+    set(libdir
+        "${CMAKE_INSTALL_LIBDIR}/${CMAKE_PROJECT_NAME}"
+        CACHE STRING "lib directory"
+    )
+    set(backenddir
+        "${libdir}/backends"
+        CACHE STRING "directory for Bareos backends"
+    )
+    set(plugindir
+        "${libdir}/plugins"
+        CACHE STRING "directory for Bareos plugins"
+    )
+  endif()
   set(scriptdir
       "lib/${CMAKE_PROJECT_NAME}/scripts"
       CACHE STRING "directory for Bareos helper scripts"

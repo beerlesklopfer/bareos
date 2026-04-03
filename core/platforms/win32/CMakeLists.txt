@@ -97,9 +97,10 @@ if(HAVE_WIN32)
   set(CPACK_COMPONENT_TRAYMONITOR_DISABLED TRUE)
   # TRAYMONITOR depends on common
 
-  # Desktop shortcut for bconsole
+  # Desktop shortcut for bconsole (only if bconsole component is selected)
   set(CPACK_NSIS_CREATE_ICONS_EXTRA
-      "CreateShortCut '$DESKTOP\\\\bconsole.lnk' '$INSTDIR\\\\bin\\\\bconsole.exe'"
+      "IfFileExists '$INSTDIR\\\\bin\\\\bconsole.exe' 0 +2
+       CreateShortCut '$DESKTOP\\\\bconsole.lnk' '$INSTDIR\\\\bin\\\\bconsole.exe'"
   )
   set(CPACK_NSIS_DELETE_ICONS_EXTRA
       "Delete '$DESKTOP\\\\bconsole.lnk'"
@@ -114,10 +115,19 @@ if(HAVE_WIN32)
             COMPONENT common)
   endif()
 
-  # TODO: Service registration needs DLLs in PATH or same directory.
-  # For now, users must register services manually after installation:
-  #   bareos-fd.exe /install
-  #   net start bareos-fd
+  # Note: On Windows, all EXEs and DLLs are in bin/ directory.
+  # This is configured in cmake/BareosSetVariableDefaults.cmake
+  # when USE_RELATIVE_PATHS is ON and HAVE_WIN32 is set.
+
+  # Register File Daemon as Windows service
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+    ExecWait '\\\"$INSTDIR\\\\bin\\\\bareos-fd.exe\\\" /install'
+    ExecWait 'net start bareos-fd'
+  ")
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+    ExecWait 'net stop bareos-fd'
+    ExecWait '\\\"$INSTDIR\\\\bin\\\\bareos-fd.exe\\\" /remove'
+  ")
 
   include(CPack)
 endif()
