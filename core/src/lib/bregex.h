@@ -24,10 +24,10 @@
 
 #include "include/config.h"
 
-#if defined(HAVE_REGEX_H)
-#  include <regex.h>
-#elif defined(HAVE_PCRE2_POSIX_H)
+#if defined(HAVE_PCRE2_POSIX_H)
 #  include <pcre2posix.h>
+#elif defined(HAVE_REGEX_H)
+#  include <regex.h>
 #else
 #  error "no suitable regex engine found."
 #endif
