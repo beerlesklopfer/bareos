@@ -780,6 +780,14 @@ void DoRestore(JobControlRecord* jcr)
               SetPortableBackup(&rctx.bfd);
               // "decompose" BackupWrite data
               SetBit(FO_WIN32DECOMP, rctx.flags);
+              if (!non_support_data) {
+                Jmsg(jcr, M_WARNING, 0,
+                     T_("Restoring Win32 backup data on a non-Win32"
+                        " system. Due to platform incompatibilities,"
+                        " file metadata, ACLs, and extended"
+                        " attributes may not be restored"
+                        " correctly.\n"));
+              }
             }
 
             if (ExtractData(jcr, &rctx.bfd, sd->msg, sd->message_length,

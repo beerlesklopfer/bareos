@@ -144,7 +144,6 @@ int UnpackAttributesRecord(JobControlRecord* jcr,
   return 1;
 }
 
-#if defined(HAVE_WIN32)
 static void StripDoubleSlashes(char* fname)
 {
   char* p = fname;
@@ -156,7 +155,6 @@ static void StripDoubleSlashes(char* fname)
     }
   }
 }
-#endif
 
 /**
  * Build attr->ofname from attr->fname and
@@ -199,16 +197,35 @@ void BuildAttrOutputFnames(JobControlRecord* jcr, Attributes* attr)
   } else {
     const char* fn;
     int wherelen = strlen(jcr->where);
+    bool ofname_complete = false;
     PmStrcpy(attr->ofname, jcr->where); /* copy prefix */
+    if (B_ISALPHA(attr->fname[0]) && attr->fname[1] == ':') {
 #if defined(HAVE_WIN32)
-    if (attr->fname[1] == ':') { attr->fname[1] = '/'; /* convert : to / */ }
-#endif
-    fn = attr->fname; /* take whole name */
-    /* Ensure where is terminated with a slash */
-    if (!IsPathSeparator(jcr->where[wherelen - 1]) && !IsPathSeparator(fn[0])) {
+      attr->fname[1] = '/'; /* convert : to / */
+#else
+      /* On non-Win32 systems, convert drive letter to DRIVE_X
+       * directory to avoid ':' in path which is unsupported on
+       * many filesystems (NFS, SMB, FAT). */
+      char drive_dir[9]; /* "DRIVE_X/" + NUL */
+      snprintf(drive_dir, sizeof(drive_dir), "DRIVE_%c/",
+               toupper(attr->fname[0]));
       PmStrcat(attr->ofname, "/");
+      PmStrcat(attr->ofname, drive_dir);
+      fn = attr->fname + 2; /* skip drive letter and colon */
+      if (IsPathSeparator(fn[0])) { fn++; }
+      PmStrcat(attr->ofname, fn);
+      ofname_complete = true;
+#endif
     }
-    PmStrcat(attr->ofname, fn); /* copy rest of name */
+    if (!ofname_complete) {
+      fn = attr->fname; /* take whole name */
+      /* Ensure where is terminated with a slash */
+      if (!IsPathSeparator(jcr->where[wherelen - 1])
+          && !IsPathSeparator(fn[0])) {
+        PmStrcat(attr->ofname, "/");
+      }
+      PmStrcat(attr->ofname, fn); /* copy rest of name */
+    }
     // Fixup link name -- if it is an absolute path
     if (attr->type == FT_LNKSAVED || attr->type == FT_LNK) {
       bool add_link;
@@ -217,15 +234,15 @@ void BuildAttrOutputFnames(JobControlRecord* jcr, Attributes* attr)
        */
       bool is_absolute_path = IsPathSeparator(attr->lname[0]);
       bool allow_prefix = (attr->type == FT_LNKSAVED || jcr->prefix_links);
+      if (allow_prefix && B_ISALPHA(attr->lname[0])
+          && attr->lname[1] == ':') {
 #if defined(HAVE_WIN32)
-      // on windows we need to detect absolute paths slightly differently.
-      // We need to check for X: at the start of the path, and if so
-      // we need to replace : by /, so that it works when we prepend where
-      if (allow_prefix && attr->lname[1] == ':') {
         attr->lname[1] = '/'; /* convert : to / for where prefix */
+#else
+        /* Handled below via DRIVE_X conversion */
+#endif
         is_absolute_path = true;
       }
-#endif
       if (is_absolute_path && allow_prefix) {
         PmStrcpy(attr->olname, jcr->where);
         add_link = true;
@@ -233,19 +250,34 @@ void BuildAttrOutputFnames(JobControlRecord* jcr, Attributes* attr)
         attr->olname[0] = 0;
         add_link = false;
       }
-      fn = attr->lname; /* take whole name */
-      /* Ensure where is terminated with a slash */
-      if (add_link && !IsPathSeparator(jcr->where[wherelen - 1])
-          && !IsPathSeparator(fn[0])) {
+#if !defined(HAVE_WIN32)
+      /* Convert drive letter in link target to DRIVE_X */
+      if (add_link && B_ISALPHA(attr->lname[0])
+          && attr->lname[1] == ':') {
+        char drive_dir[9];
+        snprintf(drive_dir, sizeof(drive_dir), "DRIVE_%c/",
+                 toupper(attr->lname[0]));
         PmStrcat(attr->olname, "/");
+        PmStrcat(attr->olname, drive_dir);
+        fn = attr->lname + 2;
+        if (IsPathSeparator(fn[0])) { fn++; }
+        PmStrcat(attr->olname, fn);
+      } else {
+#endif
+        fn = attr->lname; /* take whole name */
+        /* Ensure where is terminated with a slash */
+        if (add_link && !IsPathSeparator(jcr->where[wherelen - 1])
+            && !IsPathSeparator(fn[0])) {
+          PmStrcat(attr->olname, "/");
+        }
+        PmStrcat(attr->olname, fn); /* copy rest of link */
+#if !defined(HAVE_WIN32)
       }
-      PmStrcat(attr->olname, fn); /* copy rest of link */
+#endif
     }
   }
-#if defined(HAVE_WIN32)
   StripDoubleSlashes(attr->ofname);
   StripDoubleSlashes(attr->olname);
-#endif
 }
 
 extern char* getuser(uid_t uid, char* name, int len);

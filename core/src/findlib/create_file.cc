@@ -204,6 +204,17 @@ int CreateFile(JobControlRecord* jcr,
           if (!makepath(attr, attr->ofname, parent_mode, parent_mode, uid, gid,
                         1)) {
             Dmsg1(10, "Could not make path. %s\n", attr->ofname);
+#if !defined(HAVE_WIN32)
+            if (strchr(attr->ofname, ':')) {
+              Qmsg1(jcr, M_ERROR, 0,
+                     T_("Cannot create path \"%s\": path contains"
+                        " ':' which is not supported on this"
+                        " filesystem. Consider using 'where' or"
+                        " 'regexwhere' to rewrite Windows drive"
+                        " letters.\n"),
+                     attr->ofname);
+            }
+#endif
             attr->ofname[pnl] = savechr; /* restore full name */
             return CF_ERROR;
           }
