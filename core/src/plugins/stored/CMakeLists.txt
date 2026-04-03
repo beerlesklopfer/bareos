@@ -42,7 +42,8 @@ else()
     $<$<PLATFORM_ID:Windows>:ZLIB::ZLIB>
   )
 endif()
-install(TARGETS autoxflate-sd DESTINATION ${plugindir})
+install(TARGETS autoxflate-sd DESTINATION ${plugindir}
+        COMPONENT storagedaemon)
 
 if(NOT HAVE_WIN32 AND NOT HAVE_DARWIN_OS)
   bareos_add_plugin(scsicrypto-sd)

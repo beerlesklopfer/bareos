@@ -162,18 +162,20 @@ add_executable(bcopy)
 target_sources(bcopy PRIVATE bcopy.cc)
 target_link_libraries(bcopy PRIVATE Bareos::LibSD Bareos::Lib CLI11::CLI11)
 
-install(TARGETS bareossd DESTINATION ${libdir})
+install(TARGETS bareossd DESTINATION ${libdir} COMPONENT storagedaemon)
 
 install(TARGETS bareos-sd bls bextract bscan btape bcopy
-        DESTINATION "${sbindir}"
+        DESTINATION "${sbindir}" COMPONENT storagedaemon
 )
 
-install(CODE "set(BACKENDS \"${BACKENDS}\")")
-install(CODE "set(configtemplatedir \"${configtemplatedir}\")")
-install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")")
-install(SCRIPT ${PROJECT_SOURCE_DIR}/cmake/install-stored-configfiles.cmake)
+install(CODE "set(BACKENDS \"${BACKENDS}\")" COMPONENT storagedaemon)
+install(CODE "set(configtemplatedir \"${configtemplatedir}\")"
+        COMPONENT storagedaemon)
+install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")" COMPONENT storagedaemon)
+install(SCRIPT ${PROJECT_SOURCE_DIR}/cmake/install-stored-configfiles.cmake
+        COMPONENT storagedaemon)
 
-install(DIRECTORY DESTINATION "${archivedir}")
+install(DIRECTORY DESTINATION "${archivedir}" COMPONENT storagedaemon)
 
 add_subdirectory(backends)
 

@@ -120,6 +120,23 @@ call "$VcVarsAll" amd64 -vcvars_ver=$VcVarsVer
 REM Resolve full path to cl.exe so vcpkg sub-shells can find it
 for %%i in (cl.exe) do set CL_FULL_PATH=%%~`$PATH:i
 
+REM Find ATL headers from newest MSVC toolset that has them
+set ATL_INCLUDE=
+set ATL_LIB=
+for /d %%d in ("C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\*") do (
+  if exist "%%d\atlmfc\include\atlbase.h" (
+    set "ATL_INCLUDE=%%d\atlmfc\include"
+    set "ATL_LIB=%%d\atlmfc\lib\x64"
+  )
+)
+if defined ATL_INCLUDE (
+  set "INCLUDE=%ATL_INCLUDE%;%INCLUDE%"
+  set "LIB=%ATL_LIB%;%LIB%"
+  echo ATL found
+) else (
+  echo WARNING: ATL not found - hyper-v plugin will not build
+)
+
 set PATH=$cmakePath;C:\Program Files\Git\cmd;$ninjaPath;%PATH%
 set VCPKG_ROOT=$VcpkgRoot
 set TMP=C:\tmp
@@ -137,7 +154,8 @@ cd /d $RepoRoot
   -DCMAKE_PREFIX_PATH=$QtDir ^
   -DCMAKE_C_COMPILER=cl.exe ^
   -DCMAKE_CXX_COMPILER=cl.exe ^
-  -DENABLE_SYSTEMTESTS=OFF
+  -DENABLE_SYSTEMTESTS=OFF ^
+  -DUSE_RELATIVE_PATHS=ON
 $buildStep
 "@
 

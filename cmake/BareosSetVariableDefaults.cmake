@@ -38,7 +38,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
   set(HAVE_EXTENDED_ACL 1)
 endif()
 
-if(MSVC)
+if(MSVC AND NOT USE_RELATIVE_PATHS)
   set(bindir
       "C:/Program Files/${CMAKE_PROJECT_NAME}"
       CACHE STRING "bin directory"

@@ -174,16 +174,18 @@ target_link_libraries(
                          CLI11::CLI11
 )
 
-install(TARGETS bareos-dir bareos-dbcheck DESTINATION "${sbindir}")
+install(TARGETS bareos-dir bareos-dbcheck DESTINATION "${sbindir}"
+        COMPONENT director)
 
-install(FILES query.sql DESTINATION "${scriptdir}")
+install(FILES query.sql DESTINATION "${scriptdir}" COMPONENT director)
 
 message("using BACKENDS: ${BACKENDS}")
 message("using PLUGINS: ${PLUGINS}")
-install(CODE "set(BACKENDS \"${BACKENDS}\")")
-install(CODE "set(PLUGINS \"${PLUGINS}\")")
-install(CODE "set(configtemplatedir \"${configtemplatedir}\")")
-install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")")
+install(CODE "set(BACKENDS \"${BACKENDS}\")" COMPONENT director)
+install(CODE "set(PLUGINS \"${PLUGINS}\")" COMPONENT director)
+install(CODE "set(configtemplatedir \"${configtemplatedir}\")" COMPONENT director)
+install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")" COMPONENT director)
 
-install(SCRIPT ${PROJECT_SOURCE_DIR}/cmake/install-dird-configfiles.cmake)
+install(SCRIPT ${PROJECT_SOURCE_DIR}/cmake/install-dird-configfiles.cmake
+        COMPONENT director)
 include(DebugEdit)

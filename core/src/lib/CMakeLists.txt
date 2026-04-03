@@ -182,7 +182,7 @@ if(TARGET Jansson::Jansson)
   target_link_libraries(bareos PUBLIC Jansson::Jansson)
 endif()
 
-install(TARGETS bareos DESTINATION ${libdir})
+install(TARGETS bareos DESTINATION ${libdir} COMPONENT common)
 
 set_target_properties(
   bareos PROPERTIES VERSION "${BAREOS_NUMERIC_VERSION}"
