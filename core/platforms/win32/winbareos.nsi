@@ -469,11 +469,11 @@ Section -StopDaemon
   # if the service doesnt exist, it fails and the installation
   # cannot start
   # so we use the shotgun:
-  KillProcWMI::KillProc "bareos-fd.exe"
-  KillProcWMI::KillProc "bareos-sd.exe"
-  KillProcWMI::KillProc "bareos-dir.exe"
-  KillProcWMI::KillProc "bareos-tray-monitor.exe"
-  KillProcWMI::KillProc "bconsole.exe"
+  nsExec::ExecToLog 'taskkill /F /IM bareos-fd.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bareos-sd.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bareos-dir.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bareos-tray-monitor.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bconsole.exe'
 SectionEnd
 
 
@@ -1910,9 +1910,9 @@ Section Uninstall
   SetShellVarContext all
 
   # kill tray monitor
-  KillProcWMI::KillProc "bareos-tray-monitor.exe"
+  nsExec::ExecToLog 'taskkill /F /IM bareos-tray-monitor.exe'
   # kill bconsole if running
-  KillProcWMI::KillProc "bconsole.exe"
+  nsExec::ExecToLog 'taskkill /F /IM bconsole.exe'
 
   # uninstall service
   nsExec::ExecToLog '"$INSTDIR\bareos-fd.exe" /kill'
@@ -1931,9 +1931,9 @@ Section Uninstall
   ExecWait '$INSTDIR\nssm.exe remove bareos-webui confirm'
 
   # be sure and also kill the other daemons
-  KillProcWMI::KillProc "bareos-fd.exe"
-  KillProcWMI::KillProc "bareos-sd.exe"
-  KillProcWMI::KillProc "bareos-dir.exe"
+  nsExec::ExecToLog 'taskkill /F /IM bareos-fd.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bareos-sd.exe'
+  nsExec::ExecToLog 'taskkill /F /IM bareos-dir.exe'
 
   StrCmp $SilentKeepConfig "yes" ConfDeleteSkip # keep if silent and  $SilentKeepConfig is yes
 
