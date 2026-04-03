@@ -54,7 +54,8 @@ if(HAVE_WIN32)
 
   # Component-based install
   set(CPACK_MONOLITHIC_INSTALL FALSE)
-  set(CPACK_COMPONENTS_ALL common filedaemon director storagedaemon bconsole)
+  set(CPACK_COMPONENTS_ALL common filedaemon director storagedaemon bconsole
+                          traymonitor)
 
   # Component descriptions
   set(CPACK_COMPONENT_COMMON_DISPLAY_NAME "Common Libraries")
@@ -67,27 +68,34 @@ if(HAVE_WIN32)
   set(CPACK_COMPONENT_FILEDAEMON_DESCRIPTION
       "Bareos File Daemon - backup agent that runs on each client"
   )
-  set(CPACK_COMPONENT_FILEDAEMON_DEPENDS common)
+  # FILEDAEMON depends on common (not enforced in NSIS to avoid macro issues)
 
   set(CPACK_COMPONENT_DIRECTOR_DISPLAY_NAME "Director")
   set(CPACK_COMPONENT_DIRECTOR_DESCRIPTION
       "Bareos Director - central management and scheduling"
   )
   set(CPACK_COMPONENT_DIRECTOR_DISABLED TRUE)
-  set(CPACK_COMPONENT_DIRECTOR_DEPENDS common)
+  # DIRECTOR depends on common
 
   set(CPACK_COMPONENT_STORAGEDAEMON_DISPLAY_NAME "Storage Daemon")
   set(CPACK_COMPONENT_STORAGEDAEMON_DESCRIPTION
       "Bareos Storage Daemon - manages backup storage devices"
   )
   set(CPACK_COMPONENT_STORAGEDAEMON_DISABLED TRUE)
-  set(CPACK_COMPONENT_STORAGEDAEMON_DEPENDS common)
+  # STORAGEDAEMON depends on common
 
   set(CPACK_COMPONENT_BCONSOLE_DISPLAY_NAME "Text Console (bconsole)")
   set(CPACK_COMPONENT_BCONSOLE_DESCRIPTION
       "Command-line console for interacting with the Bareos Director"
   )
   set(CPACK_COMPONENT_BCONSOLE_DISABLED TRUE)
+
+  set(CPACK_COMPONENT_TRAYMONITOR_DISPLAY_NAME "Tray Monitor")
+  set(CPACK_COMPONENT_TRAYMONITOR_DESCRIPTION
+      "Bareos Tray Monitor - system tray status monitor"
+  )
+  set(CPACK_COMPONENT_TRAYMONITOR_DISABLED TRUE)
+  # TRAYMONITOR depends on common
 
   # Desktop shortcut for bconsole
   set(CPACK_NSIS_CREATE_ICONS_EXTRA
@@ -97,15 +105,10 @@ if(HAVE_WIN32)
       "Delete '$DESKTOP\\\\bconsole.lnk'"
   )
 
-  # Register daemons as Windows services
-  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-    ExecWait '\\\"$INSTDIR\\\\sbin\\\\bareos-fd.exe\\\" /install'
-    ExecWait 'net start bareos-fd'
-  ")
-  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-    ExecWait 'net stop bareos-fd'
-    ExecWait '\\\"$INSTDIR\\\\sbin\\\\bareos-fd.exe\\\" /remove'
-  ")
+  # TODO: Service registration needs DLLs in PATH or same directory.
+  # For now, users must register services manually after installation:
+  #   bareos-fd.exe /install
+  #   net start bareos-fd
 
   include(CPack)
 endif()

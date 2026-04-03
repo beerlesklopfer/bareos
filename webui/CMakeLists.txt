@@ -126,20 +126,27 @@ endif()
 
 if(NOT client-only)
   install(FILES version.php init_autoloader.php
-          DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/bareos-webui
+          DESTINATION ${datarootdir}/bareos-webui
+          COMPONENT webui
   )
   install(DIRECTORY tests config module public vendor
-          DESTINATION ${CMAKE_INSTALL_FULL_DATAROOTDIR}/bareos-webui
+          DESTINATION ${datarootdir}/bareos-webui
+          COMPONENT webui
   )
 
   install(FILES install/bareos/bareos-dir.d/console/admin.conf.example
           DESTINATION ${configtemplatedir}/bareos-dir.d/console/
+          COMPONENT webui
   )
   install(FILES install/bareos/bareos-dir.d/profile/webui-limited.conf.example
           DESTINATION ${configtemplatedir}/bareos-dir.d/profile/
+          COMPONENT webui
   )
-  install(FILES install/apache/bareos-webui.conf DESTINATION ${HTTPD_CONF}/)
+  install(FILES install/apache/bareos-webui.conf DESTINATION ${HTTPD_CONF}/
+          COMPONENT webui)
 
-  install(FILES install/directors.ini DESTINATION ${webuiconfdir})
-  install(FILES install/configuration.ini DESTINATION ${webuiconfdir})
+  install(FILES install/directors.ini DESTINATION ${webuiconfdir}
+          COMPONENT webui)
+  install(FILES install/configuration.ini DESTINATION ${webuiconfdir}
+          COMPONENT webui)
 endif()

@@ -105,24 +105,34 @@ if(HAVE_WIN32)
   )
 endif()
 
-install(TARGETS bareos-tray-monitor DESTINATION "${bindir}")
+install(TARGETS bareos-tray-monitor DESTINATION "${bindir}"
+        COMPONENT traymonitor
+)
 
-install(CODE "set(configtemplatedir \"${configtemplatedir}\")")
-install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")")
+install(CODE "set(configtemplatedir \"${configtemplatedir}\")"
+        COMPONENT traymonitor
+)
+install(CODE "set(SRC_DIR \"${PROJECT_BINARY_DIR}\")"
+        COMPONENT traymonitor
+)
 
 install(
   SCRIPT ${PROJECT_SOURCE_DIR}/cmake/install-tray-monitor-configfiles.cmake
+  COMPONENT traymonitor
 )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bareos-tray-monitor.desktop
         DESTINATION ${datarootdir}/applications/
+        COMPONENT traymonitor
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/bareos-tray-monitor.desktop
         DESTINATION ${sysconfdir}/xdg/autostart/
+        COMPONENT traymonitor
 )
 install(
   FILES ${CMAKE_CURRENT_SOURCE_DIR}/../images/bareos-logo_128x128.png
   DESTINATION ${datarootdir}/pixmaps/
   RENAME bareos-tray-monitor.png
+  COMPONENT traymonitor
 )
 include(DebugEdit)

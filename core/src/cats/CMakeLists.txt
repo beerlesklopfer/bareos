@@ -59,11 +59,12 @@ bareos_configure_file(
 install(
   DIRECTORY ddl
   DESTINATION ${scriptdir}
+  COMPONENT director
   FILES_MATCHING
   PATTERN *postgresql*.sql
 )
 
-install(TARGETS bareossql DESTINATION ${libdir})
+install(TARGETS bareossql DESTINATION ${libdir} COMPONENT director)
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/create_bareos_database
@@ -75,10 +76,12 @@ install(
            ${CMAKE_CURRENT_BINARY_DIR}/make_catalog_backup
            ${CMAKE_CURRENT_BINARY_DIR}/update_bareos_tables
   DESTINATION ${scriptdir}
+  COMPONENT director
 )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ddl/versions.map
         DESTINATION ${scriptdir}/ddl
+        COMPONENT director
 )
 
 include(DebugEdit)

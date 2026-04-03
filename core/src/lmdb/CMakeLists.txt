@@ -41,6 +41,6 @@ if(HAVE_WIN32)
   target_link_libraries(bareoslmdb ntdll)
 endif()
 
-install(TARGETS bareoslmdb DESTINATION ${libdir})
+install(TARGETS bareoslmdb DESTINATION ${libdir} COMPONENT common)
 
 include(DebugEdit)

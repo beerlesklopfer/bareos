@@ -29,23 +29,27 @@ install(
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE
               WORLD_READ WORLD_EXECUTE
   DESTINATION "${sbindir}"
+  COMPONENT common
 )
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/bareos-config-lib.sh btraceback.gdb
   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
   DESTINATION "${scriptdir}"
+  COMPONENT common
 )
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/bareos-config
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE
               WORLD_READ WORLD_EXECUTE
   DESTINATION "${scriptdir}"
+  COMPONENT common
 )
 if(NOT client-only)
   install(
     FILES btraceback.dbx btraceback.mdb
     PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
     DESTINATION "${scriptdir}"
+    COMPONENT common
   )
 endif()
 if(TARGET python3-fd)
@@ -54,6 +58,7 @@ if(TARGET python3-fd)
     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE
                 WORLD_READ WORLD_EXECUTE
     DESTINATION "${scriptdir}"
+    COMPONENT common
   )
 endif()
 
@@ -64,19 +69,23 @@ if(NOT client-only)
     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE
                 WORLD_READ WORLD_EXECUTE
     DESTINATION "${scriptdir}"
+    COMPONENT storagedaemon
   )
 
-  install(FILES mtx-changer.conf DESTINATION "${confdir}")
+  install(FILES mtx-changer.conf DESTINATION "${confdir}"
+          COMPONENT storagedaemon)
 
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/logrotate
     DESTINATION "${sysconfdir}/logrotate.d"
     RENAME bareos-dir
+    COMPONENT director
   )
 
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/mtx-logrotate
     DESTINATION "${sysconfdir}/logrotate.d"
     RENAME bareos-mtx
+    COMPONENT storagedaemon
   )
 endif()

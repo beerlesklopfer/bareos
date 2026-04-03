@@ -34,7 +34,7 @@ target_include_directories(
 # we need the zlib.h from ZLIB, but won't link to zlib
 target_include_directories(bareosfastlz PUBLIC $<TARGET_PROPERTY:ZLIB::ZLIB,INTERFACE_INCLUDE_DIRECTORIES>)
 target_compile_definitions(bareosfastlz PRIVATE "-DDLL_EXPORT")
-install(TARGETS bareosfastlz DESTINATION ${libdir})
+install(TARGETS bareosfastlz DESTINATION ${libdir} COMPONENT common)
 set_target_properties(
   bareosfastlz PROPERTIES VERSION "${BAREOS_NUMERIC_VERSION}"
                           SOVERSION "${BAREOS_VERSION_MAJOR}"

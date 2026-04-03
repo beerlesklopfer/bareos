@@ -99,11 +99,11 @@ endif()
 add_executable(random-commands random_commands.cc)
 target_link_libraries(random-commands fmt::fmt CLI11::CLI11)
 
-install(TARGETS ${TOOLS_BIN} DESTINATION "${bindir}")
-install(TARGETS ${TOOLS_SBIN} DESTINATION "${sbindir}")
+install(TARGETS ${TOOLS_BIN} DESTINATION "${bindir}" COMPONENT common)
+install(TARGETS ${TOOLS_SBIN} DESTINATION "${sbindir}" COMPONENT common)
 
 # install bsmtp for non-root directors
-install(TARGETS bsmtp DESTINATION "${bindir}")
-install(TARGETS bsmtp DESTINATION "${sbindir}")
+install(TARGETS bsmtp DESTINATION "${bindir}" COMPONENT common)
+install(TARGETS bsmtp DESTINATION "${sbindir}" COMPONENT common)
 
 include(DebugEdit)

@@ -41,5 +41,5 @@ if(NOT client-only)
   set(MAN8 "${MAN8};${MAN8-server}")
 
 endif()
-install(FILES ${MAN1} DESTINATION "${mandir}/man1")
-install(FILES ${MAN8} DESTINATION "${mandir}/man8")
+install(FILES ${MAN1} DESTINATION "${mandir}/man1" COMPONENT common)
+install(FILES ${MAN8} DESTINATION "${mandir}/man8" COMPONENT common)

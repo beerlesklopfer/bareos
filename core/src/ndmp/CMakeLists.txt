@@ -209,7 +209,7 @@ if(TARGET tirpc::tirpc)
   target_link_libraries(bareosndmp PUBLIC tirpc::tirpc)
 endif()
 
-install(TARGETS bareosndmp DESTINATION ${libdir})
+install(TARGETS bareosndmp DESTINATION ${libdir} COMPONENT common)
 
 set_target_properties(
   bareosndmp PROPERTIES VERSION "${BAREOS_NUMERIC_VERSION}"
