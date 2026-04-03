@@ -105,6 +105,15 @@ if(HAVE_WIN32)
       "Delete '$DESKTOP\\\\bconsole.lnk'"
   )
 
+  # Install vcpkg runtime DLLs alongside the Bareos binaries
+  if(VCPKG_INSTALLED_DIR)
+    file(GLOB VCPKG_RUNTIME_DLLS
+         "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/*.dll")
+    install(FILES ${VCPKG_RUNTIME_DLLS}
+            DESTINATION "bin"
+            COMPONENT common)
+  endif()
+
   # TODO: Service registration needs DLLs in PATH or same directory.
   # For now, users must register services manually after installation:
   #   bareos-fd.exe /install
