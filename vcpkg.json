@@ -14,14 +14,6 @@
     "jansson",
     "pthread",
     "gettext",
-    {
-      "name": "qtbase",
-      "default-features": false,
-      "features": [
-        "widgets",
-        "png"
-      ]
-    },
     "libpq",
     "readline",
     "gtest",
@@ -34,11 +26,5 @@
     "pcre2",
     "fmt"
   ],
-  "overrides": [
-    {
-      "name": "cli11",
-      "version-string": "2.4.2"
-    }
-  ],
-  "builtin-baseline": "5e605ddb03c9d1d93692a77dfdabceceb8b8113f"
+  "builtin-baseline": "cb2981c4e03d421fa03b9bb5044cd1986180e7e4"
 }
